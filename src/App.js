@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import TaskList from './components/TaskList.js';
 import './App.css';
 
@@ -16,13 +16,33 @@ const TASKS = [
 ];
 
 const App = () => {
+  const [taskData, setTaskData] = useState(TASKS);
+
+  const toggleComplete = (taskId) => {
+    const newTaskList = [];
+    console.log('toggleComplete');
+    for (const task of taskData) {
+      if (task.id !== taskId) {
+        newTaskList.push(task);
+      }
+      else {
+      const newTask = {
+        ...task,
+        isComplete: !task.isComplete
+      };
+      newTaskList.push(newTask);
+    }
+    setTaskData(newTaskList);
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
-        <div>{<TaskList tasks={TASKS} />}</div>
+        <TaskList tasks={taskData} toggleComplete={toggleComplete} />
       </main>
     </div>
   );
