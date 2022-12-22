@@ -1,49 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import TaskList from './components/TaskList.js';
 import './App.css';
-
-const TASKS = [
-  {
-    id: 1,
-    title: 'Mow the lawn',
-    isComplete: false,
-  },
-  {
-    id: 2,
-    title: 'Cook Pasta',
-    isComplete: true,
-  },
-];
+import NewTaskForm from './components/NewTaskForm.js';
 
 const App = () => {
-  const [taskData, setTaskData] = useState(TASKS);
+  const [taskData, setTaskData] = useState([]);
+  const teamAPI = 'https://task-list-api-c17.herokuapp.com/tasks';
 
-  const toggleComplete = (taskId) => {
+  useEffect(() => {
+    axios
+      .get(teamAPI)
+      .then((response) => {
+        // console.log(response.data);
+        const tasksCopy = response.data.map((task) => {
+          return {
+            ...task,
+            isComplete: task.is_complete,
+          };
+        });
+        setTaskData(tasksCopy);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  const toggleComplete = (taskId, newStatus) => {
     const newTaskList = [];
-    console.log('toggleComplete');
-    for (const task of taskData) {
-      if (task.id !== taskId) {
-        newTaskList.push(task);
-      } else {
-        const newTask = {
-          ...task,
-          isComplete: !task.isComplete,
-        };
-        newTaskList.push(newTask);
-      }
+
+    let taskStatus = '';
+    if (newStatus === true) {
+      taskStatus = 'mark_complete';
+    } else if (newStatus === false) {
+      taskStatus = 'mark_incomplete';
     }
-    setTaskData(newTaskList);
+
+    axios
+      .patch(`${teamAPI}/${taskId}/${taskStatus}`)
+      .then(() => {
+        for (const task of taskData) {
+          if (task.id !== taskId) {
+            newTaskList.push(task);
+          } else {
+            const newTask = {
+              ...task,
+              isComplete: newStatus,
+            };
+            newTaskList.push(newTask);
+          }
+        }
+        setTaskData(newTaskList);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    console.log('toggleComplete');
   };
 
   const deleteTask = (taskId) => {
     const newTaskList = [];
 
-    for (const task of taskData) {
-      if (task.id !== taskId) {
-        newTaskList.push(task);
-      }
-    }
-    setTaskData(newTaskList);
+    axios
+      .delete(`${teamAPI}/${taskId}`)
+      .then(() => {
+        for (const task of taskData) {
+          if (task.id !== taskId) {
+            newTaskList.push(task);
+          }
+        }
+        setTaskData(newTaskList);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const addTask = (formData) => {
+    axios
+      .post(teamAPI, formData)
+      .then((response) => {
+        const newTasks = [...taskData];
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -57,6 +99,7 @@ const App = () => {
           toggleComplete={toggleComplete}
           deleteTask={deleteTask}
         />
+        <NewTaskForm />
       </main>
     </div>
   );
