@@ -24,16 +24,26 @@ const App = () => {
     for (const task of taskData) {
       if (task.id !== taskId) {
         newTaskList.push(task);
+      } else {
+        const newTask = {
+          ...task,
+          isComplete: !task.isComplete,
+        };
+        newTaskList.push(newTask);
       }
-      else {
-      const newTask = {
-        ...task,
-        isComplete: !task.isComplete
-      };
-      newTaskList.push(newTask);
     }
     setTaskData(newTaskList);
+  };
+
+  const deleteTask = (taskId) => {
+    const newTaskList = [];
+
+    for (const task of taskData) {
+      if (task.id !== taskId) {
+        newTaskList.push(task);
+      }
     }
+    setTaskData(newTaskList);
   };
 
   return (
@@ -42,7 +52,11 @@ const App = () => {
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
-        <TaskList tasks={taskData} toggleComplete={toggleComplete} />
+        <TaskList
+          tasks={taskData}
+          toggleComplete={toggleComplete}
+          deleteTask={deleteTask}
+        />
       </main>
     </div>
   );

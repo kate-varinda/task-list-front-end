@@ -6,6 +6,8 @@ import './TaskList.css';
 const TaskList = (props) => {
   const tasks = props.tasks;
   const toggleComplete = props.toggleComplete;
+  const deleteTask = props.deleteTask;
+
   const getTaskListJSX = (tasks) => {
     return tasks.map((task) => {
       return (
@@ -15,7 +17,7 @@ const TaskList = (props) => {
           title={task.title}
           isComplete={task.isComplete}
           toggleComplete={toggleComplete}
-          // deleteTask={deleteTask}
+          deleteTask={deleteTask}
         />
       );
     });
