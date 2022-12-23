@@ -8,7 +8,7 @@ const App = () => {
   const [taskData, setTaskData] = useState([]);
   const teamAPI = 'https://task-list-api-c17.herokuapp.com/tasks';
 
-  useEffect(() => {
+  const fetchAllTasks = () => {
     axios
       .get(teamAPI)
       .then((response) => {
@@ -24,7 +24,9 @@ const App = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  };
+
+  useEffect(fetchAllTasks, []);
 
   const toggleComplete = (taskId, newStatus) => {
     const newTaskList = [];
@@ -80,8 +82,8 @@ const App = () => {
   const addTask = (formData) => {
     axios
       .post(teamAPI, formData)
-      .then((response) => {
-        const newTasks = [...taskData];
+      .then(() => {
+        fetchAllTasks();
       })
       .catch((error) => {
         console.log(error);
@@ -99,7 +101,7 @@ const App = () => {
           toggleComplete={toggleComplete}
           deleteTask={deleteTask}
         />
-        <NewTaskForm />
+        <NewTaskForm addTask={addTask} />
       </main>
     </div>
   );

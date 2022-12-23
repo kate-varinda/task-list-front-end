@@ -18,8 +18,14 @@ const NewTaskForm = (props) => {
     setFormData(newData);
   };
 
+  const submitForm = (e) => {
+    e.preventDefault();
+    props.addTask(formData);
+    setFormData(INITIAL_FORM_DATA);
+  };
+
   return (
-    <form>
+    <form onSubmit={submitForm}>
       <input
         type="text"
         id="title"
@@ -30,6 +36,10 @@ const NewTaskForm = (props) => {
       <input type="submit" value="Add Task" />
     </form>
   );
+};
+
+NewTaskForm.propTypes = {
+  addTask: PropTypes.func.isRequired,
 };
 
 export default NewTaskForm;
